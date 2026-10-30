@@ -6,9 +6,9 @@ Use it to build material for the engineering teams: talk outlines, team standard
 
 ## Freshness
 
-- Generated on 2026-10-26 from chrucci/expert-brain at commit `f93fb4fa520d`.
+- Generated on 2026-10-30 from chrucci/expert-brain at commit `3af7ad086a73`.
 - Newest source document quoted: 2026-10-09.
-- 219 expert principles from 17 experts, 11 dimension pages, 14 tensions (10 open, 4 leaning, 0 settled), 1 house principle.
+- 222 expert principles from 18 experts, 11 dimension pages, 15 tensions (12 open, 3 leaning, 0 settled), 1 house principle.
 
 A new kit arrives as a pull request on this repository after the weekly refresh at home; read the diff before you merge it.
 
@@ -29,8 +29,8 @@ The full source texts stay at home and are not in this kit.
 |---|---|
 | `principles-v0.md` | Principles v0: the thesis, the principles two or more experts back, the open tensions, the scoreboard and the provenance. Start here. |
 | `dimensions/` | 11 pages, one per dimension of team design, plus an index. |
-| `tensions/` | 14 pages, one per disagreement, plus an index. |
-| `principles/` | 219 verified expert principles, one file each, by expert, plus an index. |
+| `tensions/` | 15 pages, one per disagreement, plus an index. |
+| `principles/` | 222 verified expert principles, one file each, by expert, plus an index. |
 | `house-principles.md` | Chris's own principles and the trust thesis. |
 | `AGENTS.md` | Instructions for Codex; `CLAUDE.md` points Claude Code at the same file. |
 
@@ -70,3 +70,4 @@ The home pipeline tests the new wording against the experts, and the next kit ca
 - **Anthropic engineering** (`anthropic`, 14 principles): Anthropic's own teams writing first-hand about how they build with Claude Code and agents, covering harnesses, context engineering, tool design, skills, verification loops and how engineering roles change.
 - **OpenAI engineering** (`openai`, 12 principles): OpenAI's own teams writing about how they build software with Codex agents, including the harness-engineering account of a seven-engineer team shipping a million-line product with agent-written code, per-worktree observability and mechanically enforced architecture.
 - **Robert C. Martin** (`unclebob`, 12 principles): Author of Clean Code and Agile Manifesto signatory who in 2026 moved to agent-only coding, replacing human code reading with deterministic constraints (TDD, Gherkin acceptance tests, CRAP scores, mutation testing) and published SwarmForge, a multi-agent role pipeline, plus controlled experiments on those disciplines.
+- **Lauren Tan** (`tan`, 3 principles): Engineer on the Grok team at SpaceXAI (previously Cursor and Meta) whose pstack workflow ships about 2,000 PRs a month to production and treats agent self-verification as critical infrastructure rather than one skill among many.

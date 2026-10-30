@@ -50,7 +50,7 @@ Every claim you make must trace to a file in this kit and, for anything an exper
 
 Dimension ids: `skills` (Skills), `tools` (Tools), `processes` (Processes), `techniques` (Techniques), `human-roles` (Roles for humans), `agent-roles` (Roles for agents), `team-size` (Number of people), `agent-count` (Number of agents), `deterministic-guardrails` (Deterministic guardrails), `metrics` (Metrics), `emerging` (Emerging ideas).
 
-Expert ids (the folder names under `principles/`): `karpathy`, `beck`, `fowler`, `bockeler`, `joshi`, `thoughtworks`, `metr`, `dora`, `hashimoto`, `majors`, `orosz`, `osmani`, `yegge`, `willison`, `anthropic`, `openai`, `unclebob`.
+Expert ids (the folder names under `principles/`): `karpathy`, `beck`, `fowler`, `bockeler`, `joshi`, `thoughtworks`, `metr`, `dora`, `hashimoto`, `majors`, `orosz`, `osmani`, `yegge`, `willison`, `anthropic`, `openai`, `unclebob`, `tan`.
 
 Search with `rg` (or `grep -ri`) across the kit before you answer.
 Retry with one or two plain key words before you conclude the kit has nothing on a point.

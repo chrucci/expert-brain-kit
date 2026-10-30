@@ -13,235 +13,225 @@ Agents let teams produce code faster than they produce trust, so a team must bui
 
 ## Principles
 
-### 1. Prove work is done independently of its author
+### 1. Enforce must-hold rules with deterministic gates
 
-A change counts as done only when something other than the agent that wrote it says so: tests, contract checks, builds, a real call to the endpoint or a pipeline run on sample data, in an environment the agent can run itself. Review comes from a separate fresh-context agent or a human, never from the authoring agent's own summary.
+Anything that must always or never happen is enforced by compilers, linters, tests, hooks, permissions or CI gates, not by prompt text the model may ignore. When an agent repeats a mistake, the team turns the fix into a new gate, test or rule instead of patching the output by hand, and it does not remove gates once they are added.
 
-Trust: Trust comes from repeatable evidence that anyone can rerun, so it grows as fast as the checks run instead of as fast as people can read agent claims.
+Trust: Trust stops depending on how carefully someone reads each change because the system enforces the rules the same way on every change, and each failure leaves the gate set stronger for the next one.
 
-Status: established. Empirical support: measured. Experts: Anthropic engineering, OpenAI engineering, Addy Osmani, Thoughtworks, METR, Kent Beck, Simon Willison, Steve Yegge, Gergely Orosz.
+Status: established. Empirical support: measured. Experts: Thoughtworks, Anthropic engineering, Steve Yegge, Birgitta Böckeler, OpenAI engineering, Charity Majors, Mitchell Hashimoto, Addy Osmani.
 
-- Anthropic engineering: "Software is comparatively easy to test and review—you can run code and see if it works—which makes it easier to trust an agent and catch its mistakes." ([source](https://www.anthropic.com/research/measuring-agent-autonomy))
-- OpenAI engineering: "Codex can do this loop for you, but only if it knows what “good” looks like. That guidance can come from either the prompt or `AGENTS.md`." ([source](https://learn.chatgpt.com/guides/best-practices))
-- Addy Osmani: "Every PR must pass: lint, type check, tests, build" ([source](https://github.com/addyosmani/agent-skills/blob/main/docs/copilot-setup.md))
 - Thoughtworks: "Agents produce better code when they can gauge the quality of the code they produce themselves rather than relying on us to check it for them." ([source](https://martinfowler.com/articles/exploring-gen-ai/humans-and-agents.html))
-- METR: "fully autonomous AI agents using Claude 3.7 Sonnet can often correctly implement the core functionality of issues on several repositories that are included in our study, although they fail to fully satisfy all requirements (typically leaving out important documentation, failing linting/styling rules, and leaving out key unit or integration tests)." ([source](https://arxiv.org/pdf/2507.09089#page=12))
-- Kent Beck: "So it looks like we have an implementer and a verifier, which like informally, that's my kind of, that's my kind of division of labor." ([source](https://newsletter.kentbeck.com/p/genie-lessons-nobody-wants-agents?t=1594s))
-- Simon Willison: "allowing them to test that code and iterate on it independently of turn-by-turn guidance from their human supervisor." ([source](https://simonwillison.net/2026/Feb/23/agentic-engineering-patterns/))
-- Steve Yegge: "Do not commit, push, or run Dolt remote sync without explicit user or orchestrator approval." ([source](https://github.com/gastownhall/beads/blob/main/docs/getting-started/ide-setup.md))
-- Gergely Orosz: "I really like this point Armin made just a few seconds ago that AI works best when the engineer stays in the loop and the system can actually validate what changed." ([source](https://newsletter.pragmaticengineer.com/p/building-pi-and-what-makes-self-modifying?t=2553s))
-
-### 2. Name an accountable human for every change
-
-Every agent-produced change, and every service or pipeline it touches, has a named human owner who answers for its quality and decides whether it ships. Commits and tickets record both the agent that did the work and the human who owns it, and the engineers who run a system in production help set the conditions under which agent changes enter it.
-
-Trust: Trust needs someone who can be asked and held to account, and a named owner keeps accountability from disappearing as the volume of agent code grows.
-
-Status: established. Empirical support: unmeasured. Experts: Kent Beck, Addy Osmani, Simon Willison, Andrej Karpathy, Martin Fowler, Gergely Orosz, Robert C. Martin, Steve Yegge, Charity Majors.
-
-- Kent Beck: "This one is about what stays with us. Who cares whether the work is good? Who is accountable when it goes wrong?" ([source](https://newsletter.kentbeck.com/p/how-do-you-know-that))
-- Addy Osmani: "A model cannot be paged and cannot be held responsible for what it shipped, so whoever clicks merge owns it." ([source](https://addyosmani.com/blog/agentic-code-review/))
-- Simon Willison: "The moment you ship your vibe coding code for other people to use, where your bugs might actually harm somebody else, that’s when you need to take a step back." ([source](https://simonwillison.net/2026/Apr/2/lennys-podcast/))
-- Andrej Karpathy: "Agentic engineering is about preserving the quality bar of professional software. You are not allowed to introduce vulnerabilities because of vibe coding. You are still responsible for your software, just as before." ([source](https://karpathy.bearblog.dev/sequoia-ascent-2026/))
-- Martin Fowler: "This is a profound change to the nature of programming, where humans oversee LLM agents who generate the code. Humans are still responsible for what the software does and how it works, but use different skills to create their products." ([source](https://martinfowler.com/bliki/AgenticProgramming.html))
-- Gergely Orosz: "AI handles much of the implementation, but engineers are setting the direction, and make continuous course corrections." ([source](https://newsletter.pragmaticengineer.com/p/ai-first-makeover-craft))
-- Robert C. Martin: "The agents are not responsible for anything. They're entirely irresponsible. Only humans can be responsible, at the moment and probably over the next several years." ([source](https://www.aviator.co/podcast/uncle-bob-martin-ai-clean-code))
-- Steve Yegge: "When you deploy AI agents at scale, anonymous work creates real problems:" ([source](https://github.com/gastownhall/gastown/blob/main/docs/concepts/identity.md))
-- Charity Majors: "Which means software engineers who own the code should be, at minimum, *extremely involved* in defining the conditions for the code they agree to support." ([source](https://charity.wtf/p/ai-enthusiasts-are-in-a-race-against))
-
-### 3. Turn every recurring agent mistake into a check
-
-When an agent gets something wrong, or a reviewer makes the same comment twice, the team fixes the environment rather than the diff: rules that must always hold move out of prompts and into lint rules, tests, hooks or permissions, with error messages that tell the agent how to fix the problem. The team audits these checks regularly and prunes the ones newer models no longer need.
-
-Trust: Each lesson becomes a check that runs on every future change, so trust builds up over time instead of depending on someone remembering the problem.
-
-Status: established. Empirical support: unmeasured. Experts: Mitchell Hashimoto, Addy Osmani, OpenAI engineering, Thoughtworks, Birgitta Böckeler, Anthropic engineering, Steve Yegge.
-
+- Anthropic engineering: "We have type checkers. We have linters. We run the build. Claude is actually so good at writing lint rules." ([source](https://newsletter.pragmaticengineer.com/p/building-claude-code-with-boris-cherny?t=2656s))
+- Steve Yegge: "Now rules go through a lifecycle, tightening each time they're re-violated: first custom, then advisories/warnings, then written law in the constitution that all agents must obey, and finally, mechanical enforcement: programs that refuse by policy, or observe and alert loudly." ([source](https://yegge.ai/essays/fences-not-sandboxes/))
+- Birgitta Böckeler: "Once the agent gets all these instructions and guidance, execution still depends on how well the LLM interprets them!" ([source](https://martinfowler.com/articles/exploring-gen-ai/context-engineering-coding-agents.html))
+- OpenAI engineering: "Keep rules concise, explain the behavior to flag and any safe path or exception, and reserve formatting and lint checks for CI." ([source](https://learn.chatgpt.com/docs/agent-configuration/agents-md))
+- Charity Majors: "If you're debiting from this trust account and the creation of the code, it has to get built up somewhere else." ([source](https://newsletter.pragmaticengineer.com/p/stop-being-skeptical-about-ai-for?t=1633s))
 - Mitchell Hashimoto: "It is the idea that anytime you find an agent makes a mistake, you take the time to engineer a solution such that the agent never makes that mistake again." ([source](https://mitchellh.com/writing/my-ai-adoption-journey))
 - Addy Osmani: "The most important habit in harness engineering is treating agent mistakes as permanent signals." ([source](https://addyosmani.com/blog/agent-harness-engineering/))
-- OpenAI engineering: "When Codex makes the same mistake twice, ask it for a retrospective and update `AGENTS.md`. Guidance stays practical and based on real friction." ([source](https://learn.chatgpt.com/guides/best-practices))
-- Thoughtworks: "The orchestrator can grade its own session and surface clues, as it did here, but it cannot make that judgment call itself. The choice of what to codify, what to leave alone, and what might be an overreaction is still mine." ([source](https://martinfowler.com/articles/orchestrator-tax.html))
-- Birgitta Böckeler: "A good harness should not necessarily aim to fully eliminate human input, but to direct it to where our input is most important." ([source](https://martinfowler.com/articles/exploring-gen-ai/harness-engineering-memo.html))
-- Anthropic engineering: "when a coworker puts up a pull request and I'm like, this is lintable. I'll just be at Claude. Please write a lint rule for this in that PR on their PR." ([source](https://newsletter.pragmaticengineer.com/p/building-claude-code-with-boris-cherny?t=2656s))
-- Steve Yegge: "Now rules go through a lifecycle, tightening each time they're re-violated: first custom, then advisories/warnings, then written law in the constitution that all agents must obey, and finally, mechanical enforcement: programs that refuse by policy, or observe and alert loudly." ([source](https://yegge.ai/essays/fences-not-sandboxes/))
 
-### 4. Prove the tests catch broken behaviour
+### 2. Define done as a check that actually runs
 
-Humans write or approve the tests that encode intent, such as API contract tests, acceptance scenarios, data-quality checks and replayed production traffic, and the team uses mutation testing or a trusted reference implementation to confirm those tests fail when behaviour breaks. A green suite written by the agent, or high coverage, is not treated as proof that the behaviour is right or that the design is good.
+Every agent task names a deterministic finish line the agent must run before handing work back, such as the test suite, the build, a script that calls the service endpoint, or a parity run of a pipeline against a trusted reference on real or replayed data. The agent's report of success counts for nothing without the execution evidence attached.
 
-Trust: Checks earn trust only when they are shown to fail on broken code, so proving the tests stops a passing suite from giving false confidence as agent output grows.
+Trust: Reviewers start from proof that the change ran and behaved correctly, not from the agent's word, so confidence in each change is earned before anyone depends on it.
 
-Status: established. Empirical support: unmeasured. Experts: Birgitta Böckeler, Unmesh Joshi, Robert C. Martin, Kent Beck, Simon Willison, Andrej Karpathy, Charity Majors.
+Status: established. Empirical support: measured. Experts: Anthropic engineering, OpenAI engineering, Simon Willison, Gergely Orosz, METR, Addy Osmani, Andrej Karpathy.
+
+- Anthropic engineering: "Software is comparatively easy to test and review—you can run code and see if it works—which makes it easier to trust an agent and catch its mistakes." ([source](https://www.anthropic.com/research/measuring-agent-autonomy))
+- OpenAI engineering: "Not letting the agent see its work by not giving details on how to best run build and test commands" ([source](https://learn.chatgpt.com/guides/best-practices))
+- Simon Willison: "allowing them to test that code and iterate on it independently of turn-by-turn guidance from their human supervisor." ([source](https://simonwillison.net/2026/Feb/23/agentic-engineering-patterns/))
+- Gergely Orosz: "Tools that help agents get feedback – CLIs like Claude Code, Codex, and similar – have been a big boost." ([source](https://newsletter.pragmaticengineer.com/p/ai-first-makeover-craft))
+- METR: "fully autonomous AI agents using Claude 3.7 Sonnet can often correctly implement the core functionality of issues on several repositories that are included in our study, although they fail to fully satisfy all requirements (typically leaving out important documentation, failing linting/styling rules, and leaving out key unit or integration tests)." ([source](https://arxiv.org/pdf/2507.09089#page=12))
+- Addy Osmani: "Every PR must pass: lint, type check, tests, build" ([source](https://github.com/addyosmani/agent-skills/blob/main/docs/copilot-setup.md))
+- Andrej Karpathy: "But I had a Python implementation that I fully understand, and I’m just making sure I’m making a more efficient version of it, and I have tests so I feel safer doing that stuff." ([source](https://www.dwarkesh.com/p/andrej-karpathy))
+
+### 3. Prove your tests catch broken code
+
+The team does not read a green, high-coverage suite as proof, especially when the agent wrote it. It uses mutation testing, deliberately broken inputs and contract tests for every API or schema clause to show the tests fail when they should, and it watches for agents deleting or weakening tests and assertions.
+
+Trust: Gates that have been shown to fail on bad code are gates the team can lean on, so automated checks earn trust rather than borrowing it.
+
+Status: established. Empirical support: unmeasured. Experts: Birgitta Böckeler, Unmesh Joshi, Robert C. Martin, Kent Beck.
 
 - Birgitta Böckeler: "When the agent both writes the test and confirms it failed, a red test tells you the agent ran it and saw failure, not that the failure was for the right reason." ([source](https://martinfowler.com/articles/exploring-gen-ai/tdd-in-the-agent-loop.html))
 - Unmesh Joshi: "This is also why generating test cases with LLMs to improve “test coverage” is not something I find very useful." ([source](https://martinfowler.com/articles/convo-what-how.html))
-- Robert C. Martin: "Runs `bb gherkin-mutator` and improves scenarios or handlers until important mutations are killed." ([source](https://github.com/unclebob/Acceptance-Pipeline-Specification/blob/main/README.md))
-- Kent Beck: "Exactly what she told it. Not at all what she wanted. Anyone working with agents today knows the feeling." ([source](https://newsletter.kentbeck.com/p/how-do-you-know-that))
-- Simon Willison: "Having an existing conformance testing suite of the quality of `test262` is a huge unlock for projects of this magnitude, and the ability to compare output with an existing trusted implementation makes agentic engineering much more of a safe bet." ([source](https://simonwillison.net/2026/Feb/23/ladybird-adopts-rust/))
-- Andrej Karpathy: "But I had a Python implementation that I fully understand, and I’m just making sure I’m making a more efficient version of it, and I have tests so I feel safer doing that stuff." ([source](https://www.dwarkesh.com/p/andrej-karpathy))
-- Charity Majors: "Those tests and techniques are not about testing for correctness or what *ought* to be happening, they are about observing and encoding what *is* happening." ([source](https://charity.wtf/p/ai-demands-more-engineering-discipline))
+- Robert C. Martin: "The normal run proves that the project satisfies the feature. The mutation run checks whether the acceptance tests fail when important example values change." ([source](https://github.com/unclebob/Acceptance-Pipeline-Specification/blob/main/README.md))
+- Kent Beck: "So I'm gonna keep using tests because it makes sense to me to use tests. And I've had really bad experiences with the genie not using tests. or deleting tests or taking assertions out of tests." ([source](https://newsletter.kentbeck.com/p/genie-session-codex-for-macgpusortedmap?t=841s))
 
-### 5. Invest in verification, the real delivery bottleneck
+### 4. Name an accountable human for every agent change
 
-The team measures where work waits and treats human verification capacity as the constraint, putting effort there instead of into generating more code. That means scoping agent tasks tightly, letting agents do a first review pass, and having them present legible evidence such as run logs, sample requests and responses, or before-and-after data diffs.
+Every agent-produced change, service and pipeline has a named engineer who owns its quality, decides whether it ships and answers for it in production. Agent work is attributed to the agent and the owner, and the engineers who support a system help set the conditions under which agent code ships into it.
 
-Trust: Trust is limited by how fast people can verify, so making verification faster is the most direct way to let trust keep up with code.
+Trust: Trust needs someone who can be held to it, and a named owner keeps the quality bar from quietly dropping as the share of agent-written code grows.
 
-Status: established. Empirical support: measured. Experts: Thoughtworks, Addy Osmani, OpenAI engineering, DORA, Simon Willison, Andrej Karpathy, Anthropic engineering.
+Status: established. Empirical support: measured. Experts: Andrej Karpathy, Kent Beck, Martin Fowler, Addy Osmani, Simon Willison, Gergely Orosz, Anthropic engineering, Charity Majors, Robert C. Martin, Steve Yegge.
 
-- Thoughtworks: "If extraction runs in parallel but SME capacity doesn't, review becomes the pacing function and timelines stretch." ([source](https://www.thoughtworks.com/insights/articles/ai-assisted-migration-lessons))
+- Andrej Karpathy: "Agentic engineering is about preserving the quality bar of professional software. You are not allowed to introduce vulnerabilities because of vibe coding. You are still responsible for your software, just as before." ([source](https://karpathy.bearblog.dev/sequoia-ascent-2026/))
+- Kent Beck: "This one is about what stays with us. Who cares whether the work is good? Who is accountable when it goes wrong?" ([source](https://newsletter.kentbeck.com/p/how-do-you-know-that))
+- Martin Fowler: "This is a profound change to the nature of programming, where humans oversee LLM agents who generate the code. Humans are still responsible for what the software does and how it works, but use different skills to create their products." ([source](https://martinfowler.com/bliki/AgenticProgramming.html))
+- Addy Osmani: "A model cannot be paged and cannot be held responsible for what it shipped, so whoever clicks merge owns it." ([source](https://addyosmani.com/blog/agentic-code-review/))
+- Simon Willison: "The moment you ship your vibe coding code for other people to use, where your bugs might actually harm somebody else, that’s when you need to take a step back." ([source](https://simonwillison.net/2026/Apr/2/lennys-podcast/))
+- Gergely Orosz: "AI handles much of the implementation, but engineers are setting the direction, and make continuous course corrections." ([source](https://newsletter.pragmaticengineer.com/p/ai-first-makeover-craft))
+- Anthropic engineering: "In practice, there is a clear division of labor in agentic coding––people decide what to build, and the agent decides how to build it." ([source](https://www.anthropic.com/research/claude-code-expertise))
+- Charity Majors: "Which means software engineers who own the code should be, at minimum, *extremely involved* in defining the conditions for the code they agree to support." ([source](https://charity.wtf/p/ai-enthusiasts-are-in-a-race-against))
+- Robert C. Martin: "The agents are not responsible for anything. They're entirely irresponsible. Only humans can be responsible, at the moment and probably over the next several years." ([source](https://www.aviator.co/podcast/uncle-bob-martin-ai-clean-code))
+- Steve Yegge: "When you deploy AI agents at scale, anonymous work creates real problems:" ([source](https://github.com/gastownhall/gastown/blob/main/docs/concepts/identity.md))
+
+### 5. Pace generation to verification capacity, spent by risk
+
+The team treats human verification as its scarce, measured resource. It sizes agent work so a reviewer can actually follow it and slows generation rather than letting approval become a rubber stamp. It sets review depth by risk, with the most attention on auth, payments, data integrity, schema changes and high-tier services, and it reads faster approvals as a possible sign of over-trust.
+
+Trust: Code arrives no faster than people can genuinely vouch for it, and human attention goes where a lapse in trust would cost the most.
+
+Status: established. Empirical support: measured. Experts: Thoughtworks, Addy Osmani, OpenAI engineering, DORA, Andrej Karpathy, Mitchell Hashimoto, Anthropic engineering, Gergely Orosz, Kent Beck.
+
+- Thoughtworks: "A key insight, and one I’ve been thinking about for a while, is the possibility of tiering software in terms of importance and criticality. In other words, we may be able to circumvent code reviews where code quality is deemed of less importance, and instead focus our attention on areas where it really matters." ([source](https://www.thoughtworks.com/insights/articles/reflections-future-software-engineering-retreat))
 - Addy Osmani: "Scope discipline is the single biggest determinant of whether an agent’s PR is mergeable or has to be unwound." ([source](https://addyosmani.com/blog/agent-skills/))
 - OpenAI engineering: "It also means more pull requests waiting for someone who knows what to look for, and code review can quickly become the bottleneck." ([source](https://developers.openai.com/blog/custom-code-review-rules-for-codex/))
 - DORA: "With this insight, they can decide to apply AI to improve the code review process, rather than using AI to simply generate more code that will only exacerbate the bottleneck." ([source](https://services.google.com/fh/files/misc/2025_state_of_ai_assisted_software_development.pdf#page=76))
-- Simon Willison: "Anyone who’s done any product work knows that your initial ideas are always wrong. What matters is proving them, and testing them." ([source](https://simonwillison.net/2026/Apr/2/lennys-podcast/))
 - Andrej Karpathy: "we we're now kind of like cooperating with AIS and usually they are doing the generation and we as humans are doing the verification. It is in our interest to make this loop go as fast as possible." ([source](https://www.youtube.com/watch?v=LCEmiRjPEtQ&t=1320s))
-- Anthropic engineering: "As Claude takes on more, I'd noticed I was reading plans less closely, and I wanted a way to stay engaged with its choices rather than just hand them off." ([source](https://claude.dev/blog/using-claude-code-the-unreasonable-effectiveness-of-html/))
+- Mitchell Hashimoto: "If it's ghosty, I'm reviewing everything that's going into it." ([source](https://newsletter.pragmaticengineer.com/p/mitchell-hashimoto?t=4848s))
+- Anthropic engineering: "On the Claude Code team, writing code, writing tests, and refactoring rarely slows us down anymore. But the bottlenecks didn’t go away when agentic coding took away the actual need to type code. Verification, code review, and security took their place." ([source](https://claude.com/resources/articles/running-an-ai-native-engineering-org))
+- Gergely Orosz: "you have services based on tier based on criticality, the highest tier software. now needs to have let's say two or three code reviews or an approval from a director to do a configuration change which again all slows down but it's kind of like we know that this is on purpose" ([source](https://newsletter.pragmaticengineer.com/p/building-pi-and-what-makes-self-modifying?t=4035s))
+- Kent Beck: "Slow development to ensure that the damn stuff actually works." ([source](https://newsletter.kentbeck.com/p/trust-factory))
 
-### 6. Set agent autonomy by blast radius, widen with evidence
+### 6. Widen agent autonomy per task type, on evidence
 
-The team sorts work into explicit risk tiers by blast radius and reversibility, for example schema changes, auth and production data movement versus internal tooling, and gives each tier its own level of agent freedom, human gating and least-privilege access, with secrets kept out of the agent's reach. Autonomy widens only as logged intervention and failure rates stay low, and agents must stop and escalate when they hit those limits instead of working around them.
+Agents start with tight permissions, no direct access to secrets and written handback points where they must stop and escalate, such as ambiguity, destructive actions or anything outside their scope. The team grants more autonomy one task type at a time, only after the record shows low correction rates, and tightens it again when trust is lost.
 
-Trust: Autonomy grows only where evidence has already built trust, so the team never hands agents more freedom than its checks can back.
+Trust: Autonomy grows only as fast as evidence that it is safe, so the team never trusts agents with more than they have shown they can handle.
 
-Status: established. Empirical support: measured. Experts: Thoughtworks, Charity Majors, Addy Osmani, OpenAI engineering, Andrej Karpathy, Mitchell Hashimoto, Gergely Orosz, Anthropic engineering, Steve Yegge, Simon Willison.
+Status: established. Empirical support: unmeasured. Experts: Andrej Karpathy, Thoughtworks, Charity Majors, OpenAI engineering, Steve Yegge, Robert C. Martin, Simon Willison.
 
+- Andrej Karpathy: "you are in charge of the autonomy slider and depending on the complexity of the task at hand you can uh tune the amount of autonomy that you're willing to give up uh for that task" ([source](https://www.youtube.com/watch?v=LCEmiRjPEtQ&t=1229s))
 - Thoughtworks: "The final step is to package the code, test results, and my reasoning log, then notify the compliance manager for final approval." ([source](https://www.thoughtworks.com/insights/articles/a-real-world-guide-to-building-enterprise-grade-ai-agents))
 - Charity Majors: "Better evals? Better tests? Better feature flags, guardrails, observability? Work on decoupling dependencies and reducing blast radius? Start with something small and out of the critical path?" ([source](https://charity.wtf/p/ai-enthusiasts-are-in-a-race-against))
-- Addy Osmani: "You can use the `--dangerously-skip-permissions` flag only in trusted local projects where you want to bypass manual tool approval prompts." ([source](https://github.com/addyosmani/agent-skills/blob/main/docs/antigravity-setup.md))
 - OpenAI engineering: "Keep approval and sandboxing tight by default, then loosen permissions only for trusted repos or specific workflows once the need is clear." ([source](https://learn.chatgpt.com/guides/best-practices))
-- Andrej Karpathy: "you are in charge of the autonomy slider and depending on the complexity of the task at hand you can uh tune the amount of autonomy that you're willing to give up uh for that task" ([source](https://www.youtube.com/watch?v=LCEmiRjPEtQ&t=1229s))
-- Mitchell Hashimoto: "If it's ghosty, I'm reviewing everything that's going into it." ([source](https://newsletter.pragmaticengineer.com/p/mitchell-hashimoto?t=4848s))
-- Gergely Orosz: "you have services based on tier based on criticality, the highest tier software. now needs to have let's say two or three code reviews or an approval from a director to do a configuration change which again all slows down but it's kind of like we know that this is on purpose" ([source](https://newsletter.pragmaticengineer.com/p/building-pi-and-what-makes-self-modifying?t=4035s))
-- Anthropic engineering: "effective oversight doesn’t require approving every action but being in a position to intervene when it matters." ([source](https://www.anthropic.com/research/measuring-agent-autonomy))
 - Steve Yegge: "A **gate** parks a step until something external happens: a human sign-off, a timer, or a GitHub run or PR" ([source](https://github.com/gastownhall/beads/blob/main/docs/core-concepts/index.md))
+- Robert C. Martin: "Agents exchange committed work through durable handoffs, while the operator uses a local dashboard to start work, inspect agents, handle approval gates, answer clarifications, and stop the swarm." ([source](https://github.com/unclebob/swarm-forge/blob/main/README.md))
 - Simon Willison: "I'm often paranoid that one of my API keys or similar secrets might inadvertently be revealed in the detailed log files." ([source](https://simonwillison.net/2026/Apr/5/scan-for-secrets-3/))
 
-### 7. Humans own intent, design and structural health
+### 7. Measure stability and rework alongside throughput, per service
 
-Humans decide what gets built and make the consequential design calls, such as identity and authorization, data models, service contracts and pipeline boundaries, while agents decide how to implement them. A named person watches the system's long-term structure and runs regular reviews to catch design drift and hidden tech debt.
+The team judges agent work by delivery outcomes against a pre-agent baseline for each service or pipeline: change failure rate, rework, escaped defects, lead time and real use. It does not judge by lines, commits or PR counts. Metrics are paired so they pull against each other, used for the team's own improvement rather than as individual targets, and AI wins are reported in the same forum as their downstream cleanup costs.
 
-Trust: Checks can confirm that code does what was asked, but only human-owned design keeps what was asked coherent, so trust holds at the system level as well as the change level.
+Trust: Paired outcome metrics show whether trust is actually keeping pace with output, instead of letting rising throughput hide falling stability.
 
-Status: established. Empirical support: measured. Experts: Andrej Karpathy, Kent Beck, Thoughtworks, Simon Willison, Steve Yegge, Unmesh Joshi, Gergely Orosz, Birgitta Böckeler, Anthropic engineering.
+Status: established. Empirical support: measured. Experts: Thoughtworks, DORA, Gergely Orosz, Addy Osmani, METR, Charity Majors, Anthropic engineering, Simon Willison.
 
-- Andrej Karpathy: "Right now the agents are like interns. You still have to be in charge of aesthetics, judgment, taste, and oversight." ([source](https://karpathy.bearblog.dev/sequoia-ascent-2026/))
+- Thoughtworks: "If an AI generates 200 lines of code in seconds, but a developer spends 30 minutes reviewing, debugging, and refactoring to fit team patterns, the net productivity gain is questionable." ([source](https://martinfowler.com/articles/reduce-friction-ai/))
+- DORA: "DORA’s research has repeatedly demonstrated that speed and stability are not tradeoffs. In fact, we see that the metrics are correlated for most teams." ([source](https://dora.dev/guides/dora-metrics/))
+- Gergely Orosz: "This is an observed thing that when you start to have more output, you increase your deployment frequency. You often, not always, but you often have more regressions." ([source](https://newsletter.pragmaticengineer.com/p/distributed-databases-with-peter?t=4967s))
+- Addy Osmani: "Deciding on metric after-the-fact is probably not enough. Metrics can be put in place in advance, in a concise doc." ([source](https://addyosmani.com/blog/agentic-autonomy-levels/))
+- METR: "It’s possible for AI assistance to affect the outcomes without actually increasing productivity, e.g. by causing developers to write more verbose but functionally equivalent code, or causing them to break up pull requests into smaller chunks of work." ([source](https://arxiv.org/pdf/2507.09089#page=3))
+- Charity Majors: "The problem is, the wins and costs are happening to two different groups of people. There is no natural feedback loop." ([source](https://charity.wtf/p/ai-enthusiasts-are-in-a-race-against))
+- Anthropic engineering: "On the third bullet, don't confuse throughput with success. Throughput is one metric, but the real metric is measuring the thing you're trying to solve." ([source](https://claude.com/resources/articles/running-an-ai-native-engineering-org))
+- Simon Willison: "So I realized what I value more than the quality of the tests and documentation is that I want somebody to have *used* the thing." ([source](https://simonwillison.net/2026/May/6/vibe-coding-and-agentic-engineering/))
+
+### 8. Keep a human steward of system structure
+
+An experienced engineer owns each system's architecture, module boundaries and long-term health. They enforce layering with custom linters, run regular design-drift reviews, and use cheap agent refactoring to pay debt down continuously, because clean structure is what keeps future agent work accurate and cheap.
+
+Trust: A well-structured codebase keeps agent output predictable and reviewable as the system grows, so trust does not erode as complexity piles up.
+
+Status: established. Empirical support: measured. Experts: Kent Beck, Thoughtworks, Unmesh Joshi, Gergely Orosz, Birgitta Böckeler, OpenAI engineering, Simon Willison.
+
 - Kent Beck: "At some point the complexity will exceed the genie’s capacity & it’s game over with lots of dollar signs left to play for." ([source](https://newsletter.kentbeck.com/p/earn-and-learn))
-- Thoughtworks: "I think this is a clear example where an AI agent left to their own would have changed the codebase for the worse, and it took a developer with experience to notice the issue and to direct the agent to the correct implementation." ([source](https://martinfowler.com/articles/exploring-gen-ai/ccmenu-quality.html))
-- Simon Willison: "AI worked great for the low level details but did not produce a coherent high-level architecture" ([source](https://simonwillison.net/2026/Apr/5/building-with-ai/))
-- Steve Yegge: "The problem is, that is *thousands* of little decisions, many of which conflict and need a human to reconcile them." ([source](https://yegge.ai/essays/fences-not-sandboxes/))
-- Unmesh Joshi: "They are a great help while we shape the design and its vocabulary, acting as brainstorming partners to help us explore the design space and discover the right abstractions. Once the vocabulary is established, LLMs work as an excellent natural language interface to it." ([source](https://martinfowler.com/articles/llm-and-dsls.html))
+- Thoughtworks: "the same traits making high-quality software understandable to humans also allow AIs to understand it more quickly. Therefore, building high-quality software enables the AI to move faster as well." ([source](https://www.thoughtworks.com/insights/articles/quality-is-speed-AI-era))
+- Unmesh Joshi: "Without a stable vocabulary of abstractions, LLM-generated code tends to be procedural." ([source](https://martinfowler.com/articles/convo-what-how.html))
 - Gergely Orosz: "When a codebase gets too complex, the human engineer feels the issues this creates." ([source](https://newsletter.pragmaticengineer.com/p/building-pi-and-what-makes-self-modifying?t=5504s))
 - Birgitta Böckeler: "develop team rituals to maintain a good understanding of the codebase and catch drift early; keep an eye on the trend of number of files touched per change, and number of" ([source](https://martinfowler.com/articles/exploring-gen-ai/tdd-in-the-agent-loop.html))
-- Anthropic engineering: "In practice, there is a clear division of labor in agentic coding––people decide what to build, and the agent decides how to build it." ([source](https://www.anthropic.com/research/claude-code-expertise))
+- OpenAI engineering: "This is the kind of architecture you usually postpone until you have hundreds of engineers. With coding agents, it’s an early prerequisite: the constraints are what allows speed without decay or architectural drift." ([source](https://web.archive.org/web/20261006122733id_/https://openai.com/index/harness-engineering/))
+- Simon Willison: "If you’ve got a codebase with a bunch of patterns in, they will follow those patterns almost to a tee." ([source](https://simonwillison.net/2026/Mar/14/pragmatic-summit/))
 
-### 8. Keep the team's understanding level with the code
+### 9. Check that the team still understands its systems
 
-The team regularly checks whether engineers can explain and debug recently agent-changed critical services without agent help, and encourages using agents to explain and teach rather than only to generate. It deliberately creates new learning paths for juniors to replace the starter work agents now take.
+The team regularly checks that engineers can explain and debug recently agent-changed critical services and pipelines without the agent. It encourages using agents to ask questions and get explanations rather than only to generate code, and it builds deliberate learning paths for juniors to replace the starter work agents now do.
 
-Trust: People can only vouch for systems they understand, so keeping understanding level with the code keeps human oversight meaningful.
+Trust: People can only vouch for systems they understand, so keeping comprehension current keeps human judgment able to check what agents ship.
 
-Status: established. Empirical support: measured. Experts: Unmesh Joshi, Simon Willison, Thoughtworks, Addy Osmani, Anthropic engineering, Andrej Karpathy, Gergely Orosz, Kent Beck.
+Status: established. Empirical support: measured. Experts: Thoughtworks, Addy Osmani, Anthropic engineering, Simon Willison, Unmesh Joshi, Andrej Karpathy, Kent Beck.
 
-- Unmesh Joshi: "The problem is not that the LLM generated code. The problem is that the code introduced vocabulary faster than the developers built understanding." ([source](https://martinfowler.com/articles/what-is-code.html))
-- Simon Willison: "It's so easy to let the codebase evolve outside of our abilities to reason clearly about it." ([source](https://simonwillison.net/2026/Mar/25/thoughts-on-slowing-the-fuck-down/))
 - Thoughtworks: "As AI takes on more execution work, human contribution increasingly shifts toward judgment: deciding what to delegate, evaluating outputs and determining when intervention is required." ([source](https://www.thoughtworks.com/insights/articles/path-to-ai-first-organization))
 - Addy Osmani: "And within the AI group, the strong results came from those who asked conceptual questions and requested explanations rather than treating the model as a code vending machine." ([source](https://addyosmani.com/blog/agentic-skill-decay/))
 - Anthropic engineering: "The largest gap in scores between the two groups was on debugging questions, suggesting that the ability to understand when code is incorrect and why it fails may be a particular area of concern if AI impedes coding development." ([source](https://www.anthropic.com/research/AI-assistance-coding-skills))
+- Simon Willison: "It's so easy to let the codebase evolve outside of our abilities to reason clearly about it." ([source](https://simonwillison.net/2026/Mar/25/thoughts-on-slowing-the-fuck-down/))
+- Unmesh Joshi: "The problem is not that the LLM generated code. The problem is that the code introduced vocabulary faster than the developers built understanding." ([source](https://martinfowler.com/articles/what-is-code.html))
 - Andrej Karpathy: "But you still have to understand the fundamentals." ([source](https://karpathy.bearblog.dev/sequoia-ascent-2026/))
-- Gergely Orosz: "And I do have this belief that when you're working with AI, like as long as we're learning, I think we're fine. As long as we stop learning and outsource the learning to this thing, trouble will be brewing maybe, you know, months or years down the road." ([source](https://newsletter.pragmaticengineer.com/p/ai-skills-with-matt-pocock?t=2133s))
 - Kent Beck: "So, one way to think about this is a junior programmer is, you know, senior programmer writes some tests and the junior programmer goes and makes 'em pass or whatever." ([source](https://www.heavybit.com/library/podcasts/o11ycast/ep-80-augmented-coding-with-kent-beck))
 
-### 9. Measure stability and rework alongside throughput, per service
+### 10. Version the agent's working context with the code
 
-For each service or pipeline, the team tracks throughput together with change failure rate, rework, escaped defects and data incidents against a pre-agent baseline, with the unit of work defined before measuring. AI wins are reported in the same forum as their downstream cleanup costs, and metrics serve the team's own improvement rather than per-person targets.
+Conventions, business rules, check commands, known pitfalls and current API docs that agents need go into lean, reviewed, versioned instruction files in the repository, shared across the team and grown from observed failures rather than written up front. Each file has an owner and is pruned when models improve.
 
-Trust: Paired outcome metrics show directly whether trust is keeping pace with code, and they expose the gap as soon as speed starts to outrun stability.
+Trust: Reviewed, shared context makes agent output depend on the team's agreed standards rather than on who wrote the prompt, so quality stays consistent as more people direct agents.
 
-Status: established. Empirical support: measured. Experts: DORA, Thoughtworks, Gergely Orosz, Addy Osmani, Charity Majors, METR, Anthropic engineering, Simon Willison.
+Status: established. Empirical support: measured. Experts: OpenAI engineering, Thoughtworks, Charity Majors, METR, Steve Yegge, Andrej Karpathy, Addy Osmani, Birgitta Böckeler, Anthropic engineering.
 
-- DORA: "DORA’s research has repeatedly demonstrated that speed and stability are not tradeoffs. In fact, we see that the metrics are correlated for most teams." ([source](https://dora.dev/guides/dora-metrics/))
-- Thoughtworks: "If an AI generates 200 lines of code in seconds, but a developer spends 30 minutes reviewing, debugging, and refactoring to fit team patterns, the net productivity gain is questionable." ([source](https://martinfowler.com/articles/reduce-friction-ai/))
-- Gergely Orosz: "This is an observed thing that when you start to have more output, you increase your deployment frequency. You often, not always, but you often have more regressions." ([source](https://newsletter.pragmaticengineer.com/p/distributed-databases-with-peter?t=4967s))
-- Addy Osmani: "Deciding on metric after-the-fact is probably not enough. Metrics can be put in place in advance, in a concise doc." ([source](https://addyosmani.com/blog/agentic-autonomy-levels/))
-- Charity Majors: "The share of software engineering teams that work in short, fast feedback loops (the cardinal sign of discipline in my book) is, and always has been, appallingly small." ([source](https://charity.wtf/p/ai-demands-more-engineering-discipline))
-- METR: "It’s possible for AI assistance to affect the outcomes without actually increasing productivity, e.g. by causing developers to write more verbose but functionally equivalent code, or causing them to break up pull requests into smaller chunks of work." ([source](https://arxiv.org/pdf/2507.09089#page=3))
-- Anthropic engineering: "On the third bullet, don't confuse throughput with success. Throughput is one metric, but the real metric is measuring the thing you're trying to solve." ([source](https://claude.com/resources/articles/running-an-ai-native-engineering-org))
-- Simon Willison: "Designing feedback loops to help "mend the gap in shared reality" between the two groups is a fascinating organizational design problem." ([source](https://simonwillison.net/2026/Jun/4/ai-enthusiasts-ai-skeptics/))
-
-### 10. Put team knowledge where agents can read it
-
-Conventions, invariants, business rules and operational steps go into short, versioned, reviewed files in the repository, and into CLIs and config-as-code instead of console click-throughs, so agents get the same context whoever is prompting. These files have owners, start small, grow only from observed failures, and are shared among teams with similar stacks.
-
-Trust: When the standards agents work to are written down and reviewed like code, output quality stops depending on tacit knowledge, and the team can trust it consistently across people and services.
-
-Status: established. Empirical support: measured. Experts: OpenAI engineering, Thoughtworks, Charity Majors, Anthropic engineering, Addy Osmani, Birgitta Böckeler, Steve Yegge, METR, Andrej Karpathy, Simon Willison.
-
-- OpenAI engineering: "Create persistent defaults in your Codex home directory so every repository inherits your working agreements." ([source](https://learn.chatgpt.com/docs/agent-configuration/agents-md))
+- OpenAI engineering: "Add overrides in nested directories when specific teams need different rules." ([source](https://learn.chatgpt.com/docs/agent-configuration/agents-md))
 - Thoughtworks: "Every team has senior developers who instinctively know when code is right—they spot architectural drift, security gaps, and convention violations that others miss." ([source](https://martinfowler.com/articles/reduce-friction-ai/))
 - Charity Majors: "The knowledge in our heads is unavailable to AI until we encode it into the system, after all." ([source](https://charity.wtf/p/ai-demands-more-engineering-discipline))
-- Anthropic engineering: "The highest-signal content in any skill is the Gotchas section. These sections should be built up from common failure points that Claude runs into when using your skill." ([source](https://claude.dev/blog/lessons-from-building-claude-code-how-we-use-skills/))
+- METR: "Our results also suggest that AI capabilities may be comparatively lower in settings with very high quality standards, or with many implicit requirements (e.g. relating to documentation, testing coverage, or linting/formatting) that take humans substantial time to learn." ([source](https://metr.org/blog/2025-07-10-early-2025-ai-experienced-os-dev-study/))
+- Steve Yegge: "Commit the instruction files (`AGENTS.md`, `CLAUDE.md`, `GEMINI.md`, as applicable) to git so all team members and AI tools get the same instructions." ([source](https://github.com/gastownhall/beads/blob/main/docs/getting-started/ide-setup.md))
+- Andrej Karpathy: "Claude kept hallucinating deprecated APIs, model names, and input/output conventions that have all changed recently, which was confusing, but it resolved them after I copy pasted the docs back and forth for a while." ([source](https://karpathy.bearblog.dev/vibe-coding-menugen/))
 - Addy Osmani: "Write the project rules file describing the real conventions, the ones in the code, not the ones in the wiki." ([source](https://github.com/addyosmani/agent-skills/blob/main/docs/adoption-guide.md))
 - Birgitta Böckeler: "My recommendation would be to build context like rules files up gradually, and not pump too much stuff in there right from the start." ([source](https://martinfowler.com/articles/exploring-gen-ai/context-engineering-coding-agents.html))
-- Steve Yegge: "Commit the instruction files (`AGENTS.md`, `CLAUDE.md`, `GEMINI.md`, as applicable) to git so all team members and AI tools get the same instructions." ([source](https://github.com/gastownhall/beads/blob/main/docs/getting-started/ide-setup.md))
-- METR: "Our results also suggest that AI capabilities may be comparatively lower in settings with very high quality standards, or with many implicit requirements (e.g. relating to documentation, testing coverage, or linting/formatting) that take humans substantial time to learn." ([source](https://metr.org/blog/2025-07-10-early-2025-ai-experienced-os-dev-study/))
+- Anthropic engineering: "The highest-signal content in any skill is the Gotchas section. These sections should be built up from common failure points that Claude runs into when using your skill." ([source](https://claude.dev/blog/lessons-from-building-claude-code-how-we-use-skills/))
+
+### 11. Make services drivable and observable by agents
+
+The team prefers stacks and tooling that agents can operate and check: CLIs with self-describing help, local copies of a service an agent can start and query for structured results, configuration and infrastructure as text and commands rather than console clicks, strong typing and validated schemas, and wide structured telemetry agents can query.
+
+Trust: When agents can exercise and observe the real system themselves, more of each change gets checked by machines before a human has to judge it.
+
+Status: established. Empirical support: unmeasured. Experts: Andrej Karpathy, Simon Willison, Lauren Tan, Charity Majors, Birgitta Böckeler, Unmesh Joshi.
+
 - Andrej Karpathy: "All of this work and state is not even accessible or manipulatable by an LLM - how are we supposed to be automating society by 2027 like this?" ([source](https://karpathy.bearblog.dev/vibe-coding-menugen/))
 - Simon Willison: "I really like this pattern where the `--help` output for a command provides enough detail that a coding agent can use it—it works kind of like bundling a `SKILL.md` file directly inside the tool." ([source](https://simonwillison.net/2026/Jun/30/shot-scraper-video/))
-
-### 11. Treat code structure as agent infrastructure
-
-The team invests in stable abstractions, enforced module and service boundaries, strong typing, schemas and small validated DSLs for things like pipeline definitions, because agents copy whatever patterns they find. It benchmarks a fixed change at checkpoints to see how structure affects agent cost and success.
-
-Trust: A constrained, well-factored codebase narrows what agents can get wrong and lets machines validate more of their output, so each change needs less human trust.
-
-Status: established. Empirical support: measured. Experts: Thoughtworks, Unmesh Joshi, Simon Willison, Birgitta Böckeler, Gergely Orosz, Kent Beck.
-
-- Thoughtworks: "the same traits making high-quality software understandable to humans also allow AIs to understand it more quickly. Therefore, building high-quality software enables the AI to move faster as well." ([source](https://www.thoughtworks.com/insights/articles/quality-is-speed-AI-era))
-- Unmesh Joshi: "Because abstractions form the essential vocabulary for the prompts, the generated program is more predictable and easier to review." ([source](https://martinfowler.com/articles/convo-what-how.html))
-- Simon Willison: "If you’ve got a codebase with a bunch of patterns in, they will follow those patterns almost to a tee." ([source](https://simonwillison.net/2026/Mar/14/pragmatic-summit/))
+- Lauren Tan: "The CLI lets an agent start the app, navigate it, inspect state, and read structured JSON results back. Each agent gets a complete copy of the application and can test a change end to end." ([source](https://thenewstack.io/agentic-verification-distributed-systems/))
+- Charity Majors: "At agentic speed, that reconstruction becomes a bottleneck and a failure surface." ([source](https://charity.wtf/p/your-data-is-made-powerful-by-context))
 - Birgitta Böckeler: "The harness described suggests that increasing trust and reliability required constraining the solution space: specific architectural patterns, enforced boundaries, standardized structures." ([source](https://martinfowler.com/articles/exploring-gen-ai/harness-engineering-memo.html))
-- Gergely Orosz: "Old “enterprise” patterns are coming back in fashion for writing quality software, as agents are the new junior engineers" ([source](https://newsletter.pragmaticengineer.com/p/opencode))
-- Kent Beck: "the genie only has to operate on a single file at a time, then it seems to operate much better. If I break it out into two files and now the genie has to make some change that spans two files, then it gets stupid again." ([source](https://newsletter.kentbeck.com/p/genie-sessions-optionality?t=3120s))
+- Unmesh Joshi: "The agent can generate a candidate, run it past the validator, and repair it from the error, all without a human in the loop." ([source](https://martinfowler.com/articles/llm-and-dsls.html))
 
-### 12. Parallelize only independent work, coordinated by deterministic machinery
+### 12. Parallelize agents only along independent seams
 
-Agents run in parallel only on work that splits cleanly, such as separate services, files or pipeline stages in their own worktrees, and each engineer finds their own limit from data on review quality and rework. Work state, claims, dependencies and handoffs live in a durable, version-controlled tracker or queue, not in agent sessions or a human's head.
+Agents run in parallel only on work that splits cleanly into separate files, services or pipeline stages, each in its own isolated workspace. Coordination state such as task claims, dependencies and handoffs lives in durable, deterministic machinery rather than in an engineer's head or a chat session.
 
-Trust: Deterministic coordination keeps parallel work auditable and collision-free, so adding agents adds output without adding untracked risk.
+Trust: Independent, traceable streams of work can each be verified on their own, so adding agents does not create tangled changes no one can vouch for.
 
-Status: established. Empirical support: measured. Experts: Anthropic engineering, Addy Osmani, Kent Beck, Thoughtworks, Simon Willison, Steve Yegge, Robert C. Martin, Charity Majors.
+Status: established. Empirical support: measured. Experts: Anthropic engineering, Addy Osmani, Kent Beck, Thoughtworks, Simon Willison, Steve Yegge, Robert C. Martin.
 
 - Anthropic engineering: "Split parallel tasks along file boundaries, merge the branches in a sensible order, and expect a session to report problems that another session is already fixing." ([source](https://claude.dev/blog/claude-code-in-the-cloud/))
-- Addy Osmani: "The biggest bottleneck at this level is decomposition: defining the right slices to delegate." ([source](https://addyosmani.com/blog/agentic-autonomy-levels/))
+- Addy Osmani: "Pick this only when **independent** investigations can run in parallel and produce reports that a single agent then merges." ([source](https://github.com/addyosmani/agent-skills/blob/main/docs/agents.md))
 - Kent Beck: "I was managing it. Watching which agent was doing what. Wondering when to interrupt. Holding state in my head that the system should have been holding for me." ([source](https://newsletter.kentbeck.com/p/genie-lessons-nobody-wants-agents))
 - Thoughtworks: "Tasks that need the same mental model should usually stay together." ([source](https://martinfowler.com/articles/orchestrator-tax.html))
-- Simon Willison: "I can fire up four agents in parallel and have them work on four different problems. And by like 11 AM, I am wiped out for the day." ([source](https://simonwillison.net/2026/Apr/2/lennys-podcast/))
-- Steve Yegge: "I arrived at 18 by slowly adding them, as needed, until I found equilibrium: I don't really need any more than this, or it overwhelms the fleet." ([source](https://yegge.ai/essays/the-shape-of-things-to-come/))
+- Simon Willison: "Carefully managing the context such that it fits within those limits is critical to getting great results out of a model." ([source](https://simonwillison.net/guides/agentic-engineering-patterns/subagents/))
+- Steve Yegge: "wake an agent when something needs judgment. The rule is: crons watch, models act." ([source](https://yegge.ai/essays/the-shape-of-things-to-come/))
 - Robert C. Martin: "SwarmForge coordinates AI agents in isolated git worktrees and tmux sessions." ([source](https://github.com/unclebob/swarm-forge/blob/main/README.md))
-- Charity Majors: "Ultimately, the answer to this question is you should run the number of agents that allows you to deliver impact most effectively, and you should do the work of generating the data to answer that question for yourself." ([source](https://www.honeycomb.io/blog/ai-norms-values-part-2-ai-honeycomb-engineering))
 
-### 13. Choose models, tools and instructions by your own evals
+### 13. Test agent setups with repeated runs on real tasks
 
-The team keeps a small eval suite of its own representative tasks and reruns it whenever it changes a model, tool, prompt or rules file, comparing pass rate, cost, time and review effort instead of relying on benchmarks or folklore. It routes routine, checkable work to cheaper models and saves stronger models for design, review and hard debugging, letting the evals confirm that quality holds.
+The team chooses models, effort levels, tools, prompts and rules by running them repeatedly against a fixed set of its own representative tasks and a baseline, not by reputation, folklore or vendor benchmarks. It sends work to the cheapest model that passes and reruns the evals when models change.
 
-Trust: Evals turn the agent setup itself into something measured and repeatable, so the team can trust a change to its tooling for the same reason it trusts a code change.
+Trust: Setups proven on the team's own work behave predictably, so the team can rely on them instead of discovering their failures in production.
 
-Status: established. Empirical support: measured. Experts: Birgitta Böckeler, Thoughtworks, Andrej Karpathy, Kent Beck, OpenAI engineering, METR, Anthropic engineering, Addy Osmani, Steve Yegge.
+Status: established. Empirical support: measured. Experts: Kent Beck, Birgitta Böckeler, Thoughtworks, Andrej Karpathy, OpenAI engineering, METR, Anthropic engineering, Addy Osmani.
 
+- Kent Beck: "That means I'm going to be doing the same thing over and over again with variations and seeing what of those variations really matter." ([source](https://newsletter.kentbeck.com/p/run-right-and-fast-for-the-adaptive?t=668s))
 - Birgitta Böckeler: "So I also did a few runs of my automated setup with reasoning off - and lo and behold, it's not only faster (which was to be expected), but also performed the same to slightly better!" ([source](https://martinfowler.com/articles/exploring-gen-ai/local-models-for-coding-factors.html))
 - Thoughtworks: "Teams should always evaluate these tools using evals; doing so not only helps us measure how good our agents are over time, it also helps us assess which agents perform better for specific use cases." ([source](https://www.thoughtworks.com/insights/articles/claude-code-cobol-modernization-reality))
 - Andrej Karpathy: "You have to explore the model they give you. It has no manual. It works in some settings and not others." ([source](https://karpathy.bearblog.dev/sequoia-ascent-2026/))
-- Kent Beck: "I want to find out what augmented development is sensitive to. Does it matter what order we implement the tests in? Does it matter what priority we put on readability versus the next feature?" ([source](https://newsletter.kentbeck.com/p/run-right-and-fast-for-the-adaptive?t=668s))
 - OpenAI engineering: "Try one change that should trigger the rule, one safe counterexample, and one unrelated change. Check that the first produces a useful finding and the others do not create noise, then refine the guidance from what you see." ([source](https://developers.openai.com/blog/custom-code-review-rules-for-codex/))
 - METR: "benchmarks may overestimate model capabilities by only measuring performance on well-scoped, algorithmically scorable tasks." ([source](https://metr.org/blog/2025-07-10-early-2025-ai-experienced-os-dev-study/))
 - Anthropic engineering: "Sonnet 5.5 fits best when the task has a clear spec and a way to check the result." ([source](https://claude.dev/blog/building-with-claude-sonnet-5-5/))
 - Addy Osmani: "Route the hard reasoning to a big model and the routine work, test generation, code review, CI checks, to a small cheap one. The quality holds and the bill comes down." ([source](https://addyosmani.com/blog/new-sdlc-vibe-coding/))
-- Steve Yegge: "have agents hand off earlier in context (price is quadratic-ish in context length)" ([source](https://yegge.ai/essays/seats-and-sunsets/))
 
-### 14. Build agent skill together, on real work
+### 14. Build agent skill together, on scheduled real work
 
-The team builds agentic skill hands-on in scheduled time, training whole teams together, managers included, on their actual services and pipelines and keeping pairing and peer review in the loop. It shares what works in visible channels and expects a productivity dip before the gains arrive.
+Whole teams, managers included, learn agentic engineering on their actual work during scheduled time, starting in low-risk areas. They keep pairing and shared practice, and enthusiasts and skeptics compare evidence together. A central enablement group supplies tooling and shared practices while individuals keep experimenting.
 
-Trust: Skill built together spreads calibrated judgment about when to trust agent output across the whole team instead of leaving it with a few enthusiasts.
+Trust: Skill in instructing and verifying agents is what makes a person's sign-off meaningful, and building it in the open spreads calibrated trust across the team instead of leaving it with a few people.
 
 Status: established. Empirical support: measured. Experts: DORA, Gergely Orosz, Steve Yegge, Simon Willison, METR, Kent Beck, Charity Majors, Thoughtworks.
 
@@ -251,84 +241,88 @@ Status: established. Empirical support: measured. Experts: DORA, Gergely Orosz, 
 - Simon Willison: "The key skill required to make productive use of coding agents is being able to confidently instruct them on how to make changes and then confidently verify that those changes have been applied in the correct way." ([source](https://simonwillison.net/2026/Aug/22/more-than-just-code-review/))
 - METR: "It also may be the case that there are strong learning effects for AI tools like Cursor that only appear after several hundred hours of usage—our developers typically only use Cursor for a few dozen hours before and during the study." ([source](https://metr.org/blog/2025-07-10-early-2025-ai-experienced-os-dev-study/))
 - Kent Beck: "So while we're in this extremely murky regime, um, it behooves us to try a little bit of everything and be a part of communities that are trying everything that we're missing." ([source](https://newsletter.kentbeck.com/p/genie-lessons-nobody-wants-agents?t=2025s))
-- Charity Majors: "I want people who understand what we're trying to do. Understand how we're trying to do it or who are there to help us figure out how we're going to do it." ([source](https://newsletter.pragmaticengineer.com/p/stop-being-skeptical-about-ai-for?t=4284s))
-- Thoughtworks: "Thoughtworks combined established agile practices, including agile pairing, shared ownership and peer review, with 18 AI skills and 12 reusable prompts." ([source](https://www.thoughtworks.com/insights/articles/strategic-ai-delivery-platform-modernization))
+- Charity Majors: "Expect the company to provide you with resources like product subscriptions, tokens, and shared best practices, but know that your own continuous experimentation and learning will also be required." ([source](https://www.honeycomb.io/blog/ai-norms-values-part-2-ai-honeycomb-engineering))
+- Thoughtworks: "at the core of the software engineering craft remains human collaboration and sharing." ([source](https://www.thoughtworks.com/insights/blog/agile-engineering-practices/why-ai-raising-stakes-software-engineering-craft))
 
-### 15. Staff for domain depth, breadth and senior oversight
+### 15. Staff for domain judgment and breadth, not throughput
 
-The team staffs for domain and product knowledge and cross-functional breadth rather than raw coding throughput, and keeps the senior infrastructure, data and security people who can judge agent output. Product, operations and other non-engineers can make changes with agents, going through the same gates as engineers.
+With agents supplying raw coding speed, the team hires and grows people for domain knowledge, systems judgment and product sense. It forms small cross-functional teams with broad engineers, and it keeps the senior infrastructure, data and security expertise needed to oversee agent output.
 
-Trust: People who know the domain and the risky parts of the system can tell plausible agent output from correct output, so their judgment is what lets trust keep up as each person covers more ground.
+Trust: Trust in agent output rests on people who know what correct looks like in the domain, so staffing for judgment raises the team's ability to verify as fast as agents raise its ability to produce.
 
-Status: established. Empirical support: measured. Experts: Charity Majors, Addy Osmani, Kent Beck, Gergely Orosz, Anthropic engineering, Martin Fowler.
+Status: established. Empirical support: measured. Experts: Anthropic engineering, Gergely Orosz, Martin Fowler, Charity Majors, Addy Osmani, Kent Beck.
 
+- Anthropic engineering: "What I index on less, on the other hand, is raw throughput; the models handle that. The more important question is where you still need human expertise, and that’s where I’d focus." ([source](https://claude.com/resources/articles/running-an-ai-native-engineering-org))
+- Gergely Orosz: "As engineers, I think it's pretty clear that an engineer becomes more valuable the more they take on the other parts of the business, the more empathy, the understanding." ([source](https://newsletter.pragmaticengineer.com/p/design-engineering-with-maggie-appleton?t=4971s))
+- Martin Fowler: "Additionally this raises the importance of programmers understanding the domain they are working with, collaborating with users and customers to iteratively define and build their product." ([source](https://martinfowler.com/bliki/AgenticProgramming.html))
 - Charity Majors: "Roles are blurring all over the place between eng and manager, eng and product, eng and business, eng and design, frontend eng and backend eng." ([source](https://www.honeycomb.io/blog/honeycomb-10-year-manifesto-part-1))
 - Addy Osmani: "Developers with the deepest knowledge in one or two areas while maintaining broad literacy tend to deliver the best results." ([source](https://addyosmani.com/blog/earning-judgment/))
 - Kent Beck: "The augmented development tools give us a chance to break down those silos. Now they also give us tools to enforce the silos more directly. And I hope we don't do that." ([source](https://newsletter.kentbeck.com/p/nobody-knows?t=1987s))
-- Gergely Orosz: "Small teams that have the right skill set or see the right business opportunity or have advantages can do way more." ([source](https://newsletter.pragmaticengineer.com/p/from-ides-to-ai-agents-with-steve?t=1164s))
-- Anthropic engineering: "What I index on less, on the other hand, is raw throughput; the models handle that. The more important question is where you still need human expertise, and that’s where I’d focus." ([source](https://claude.com/resources/articles/running-an-ai-native-engineering-org))
-- Martin Fowler: "Additionally this raises the importance of programmers understanding the domain they are working with, collaborating with users and customers to iteratively define and build their product." ([source](https://martinfowler.com/bliki/AgenticProgramming.html))
 
 ## Tensions
 
-- **Must humans read every agent diff?** (open): Should a human read and approve agent code line by line, or move human attention to intent and design while automated and agentic checks validate the code?
-  - Gergely Orosz, Martin Fowler, Simon Willison: Keep an engaged human reviewer on agent changes, with extra friction on critical services, because people stop reading once output looks fine a few times.
-  - Robert C. Martin, Charity Majors, Steve Yegge, Thoughtworks: Line-by-line review is slow and humans are poor validators. Check architecture, deployability and running behaviour, and let machines and layered agent review catch bugs.
-  - Settle it: Within one service tier, randomly route agent PRs either to full line-by-line human review or to deterministic gates plus agent review plus a human design check, and compare escaped defects, incidents and review hours over a quarter.
-- **How many agents should one engineer run?** (open): Should an engineer run one or two agents at a time, or scale to many parallel agents with coordination machinery?
-  - Mitchell Hashimoto, Kent Beck, Robert C. Martin: Run one agent, two at most. Extra agents add cleanup and coordination work for the human.
-  - Steve Yegge, Gergely Orosz, Addy Osmani: Run many agents in parallel, adding one at a time until throughput stops rising, with deterministic dispatch and owned areas to keep them apart.
-  - Charity Majors: There is no team-wide answer. Each engineer finds their own count from their own data.
-  - Settle it: Have engineers rotate through two-week periods at one, two, four and eight concurrent agents on comparable backlog work, recording merged changes after full review, human cleanup hours, rework and defects per period.
-- **Can one person replace a team?** (open): Should a leader restructure toward individuals each owning large components with agents, or keep small multi-person teams that share the mental model?
-  - Robert C. Martin: One human directing agents can do the work of five or six developers, so teams become individuals owning components behind narrow interfaces.
-  - Thoughtworks, Simon Willison, Kent Beck: Teams shrink but not to one. Several people are needed to share the cognitive load, hold the mental model and build trust through daily collaboration.
-  - Settle it: Run comparable components with one owner plus agents against a team of two or three plus agents for six months, tracking functionality delivered, incident response time, defects and what happens when the solo owner is away.
-- **Trust reported speedups or measure them?** (leaning): Should a leader resize and restructure teams on practitioner reports of large agent speedups, or only on controlled measurement of real work?
-  - METR, Gergely Orosz (measured): Self-reports and forecasts are unreliable, even about direction; experienced developers on mature repos were measured 19% slower while believing they were faster.
-  - Thoughtworks, Steve Yegge: Small agent-assisted teams have delivered work estimated for far larger teams, so projects can be staffed with fewer people now.
-  - Settle it: Randomly assign scoped backlog tasks to AI-allowed and AI-disallowed conditions on the team's own codebase, record completion time, and compare with the developers' forecasts and estimates.
-- **Does AI help novices or experts more?** (open): Should a team point agents mainly at unfamiliar code and tasks, or at its deepest domain experts working in their own areas?
-  - METR (measured): AI help is worth most on unfamiliar tasks and small greenfield work and least where the developer is already an expert.
-  - Anthropic engineering, Gergely Orosz, Simon Willison (measured): Agents amplify existing expertise, so domain and systems experts get the most out of them and should be staffed and hired for.
-  - Settle it: Break down agent-assisted task time and verified success by the engineer's prior exposure to the code, separating speed (METR's measure) from quality of outcome (Anthropic's measure).
-- **Is token spend a useful team metric?** (leaning): Should a leader track and encourage per-engineer token spend during adoption, or ignore activity measures in favour of outcomes?
-  - Steve Yegge (measured): Token spend shows real practice and is worth pushing up to around 15M tokens a day before switching to waste and outcomes per token.
-  - DORA, Gergely Orosz, Charity Majors (measured): Usage and token counts reward looking busy and invite gaming; judge AI only by delivery outcomes and never set individual usage targets.
-  - Settle it: Over two quarters, correlate each engineer's token spend with their change fail rate, rework and lead time, and check whether teams told to raise spend improve outcomes more than teams given only outcome goals.
-- **Should teams prescribe test-first to agents?** (leaning): Should the team instruct agents to follow a test-first process such as TDD, or only verify outcomes and leave the process to the agent?
-  - Birgitta Böckeler (measured): Prescribing TDD added cost with no measured quality gain; enforce what must happen with hooks and invest in feedback on results.
-  - Simon Willison, Kent Beck, Robert C. Martin: Agents should work test-first in small test-gated steps, because without it they drift, skip tests or delete assertions.
-  - Settle it: Run the same set of tasks with and without TDD instructions, several runs each, and compare blind quality rankings, mutation scores, defects and tokens per task.
-- **Write docs or just ask the agent?** (open): Should a team write and maintain documents recording intent and decisions, or keep code simple and ask the agent when questions arise?
-  - Kent Beck: Agents weaken the case for docs and ADRs; ask the agent about the source instead of writing documents that go stale.
-  - Gergely Orosz, OpenAI engineering, Charity Majors: Intent, decisions and tacit rules are not in the code, so record them in versioned files beside it or they are lost to people and agents.
-  - Settle it: Collect real questions engineers ask about a service, answer half by asking an agent of the code alone and half with linked specs and decision logs, and score accuracy and time, especially for why-questions.
-- **Spec up front or evolve a prototype?** (open): Should agent work start from a human-approved spec and plan, or from a shared prototype evolved in short visible cycles?
-  - Addy Osmani, Thoughtworks, Gergely Orosz: Agents should build from a precise, approved spec and staged design checkpoints, because ambiguity multiplies across agents.
-  - Steve Yegge: At agent speed, evolve a living prototype in the open instead of writing a big upfront spec.
-  - Kent Beck: Whether spec-first fits depends on whether the software is a one-off or must keep paying for its next step, so decide that first.
-  - Settle it: Label features as one-off or long-lived, run comparable features spec-first and prototype-first, and compare idea-to-ship time, rework and later rewrite rates.
-- **Should engineers keep writing code by hand?** (open): Should engineers keep hand-writing and reshaping a meaningful share of code, or move almost entirely to directing, specifying and harness work?
-  - Unmesh Joshi, Mitchell Hashimoto: Humans should keep writing and reshaping code, because design is discovered by writing it and skills only grow in work not delegated.
-  - Charity Majors, Anthropic engineering, OpenAI engineering (measured): The human job moves from typing code to deciding what to build, writing specs, interpreting production and improving the harness.
-  - Settle it: Compare modules where humans authored or refactored the structure with modules merged as generated, on later change lead time and readability, and run periodic debugging checks on engineers by how much they hand-code.
-- **Small batches or megabatches onto main?** (leaning): When agents commit faster than the build can verify, should a team hold to small verified changes or land large batches and roll forward?
-  - Steve Yegge: Land large batches onto main together and have agents diagnose and fix breakage, since one green build per commit becomes impossible.
-  - DORA, Addy Osmani (measured): Keep each change small and rollback cheap; larger changes are slower and less stable, and AI makes holding this discipline more important.
-  - Settle it: On a high-commit-rate repo, alternate periods of batched bisection with small changes and megabatch landing, comparing time main stays red, commit-to-landing time and production failures.
-- **Validate before merge or in production?** (open): Should a team put its validation effort into pre-merge deterministic gates or into fast production observation with flags and progressive rollout?
-  - Charity Majors: Pre-production checks quickly stop paying off; replace merge-and-hope with deploy, observe and learn using flags, rollouts and traces.
-  - Addy Osmani, Thoughtworks, Anthropic engineering: Work is done only when deterministic checks in the loop prove it before merge, so failures are caught before a human or user sees them.
-  - Settle it: For a set of services, shift spend toward either stronger pre-merge gates or production telemetry and progressive rollout, and track where defects are caught and how fast failures are found and fixed.
-- **Specialist role pipelines or lean subagents?** (open): Should a team split agent work into a fixed pipeline of specialist roles, or keep one main agent and use subagents only to protect context and cut cost?
-  - Robert C. Martin, Steve Yegge: Divide work into distinct agent roles (specifier, coder, cleaner, architect, QA, or worker, supervisor, merger) each owning one concern.
-  - Simon Willison, Kent Beck (measured): Role swarms add coordination cost without matching benefit; use subagents for context isolation and cheaper models only.
-  - Settle it: Run the same features through a role pipeline and through a single agent with subagents, comparing escaped defects, rework, tokens per task and human coordination time.
-- **Slow down, or speed is safety?** (open): Should a team deliberately slow agent-driven delivery until trust catches up, or push throughput on the basis that speed and stability rise together?
-  - Kent Beck, Birgitta Böckeler: Agents produce code faster than trust; slow down so it really works and lean on trust-building practices.
-  - DORA (measured): Throughput and stability improve together and going slower does not make delivery safer; measure both and fix instability directly.
-  - Settle it: Track deployment frequency, lead time, change fail rate and rework per service as AI adoption grows, and test whether services that throttled agent output saw lower instability than those that did not.
+- **Does line-by-line human review stay?** (open): Should a human read every agent-written diff before it merges, or should human review move above the code and be planned away?
+  - Gergely Orosz, Simon Willison, Martin Fowler, Andrej Karpathy: Keep an engaged human reviewer who reads agent code, with extra friction on critical services, because automation bias lets defects through once nobody reads.
+  - Robert C. Martin, Steve Yegge, Charity Majors: Line-by-line review is slow and low value. Humans sign off on architecture, deployability and the running system, while machines and layered agent reviewers do the checking.
+  - Settle it: For one quarter, randomly route low and medium risk agent PRs to either full human line review or architecture and behaviour sign-off plus agentic review, and compare escaped defects, rollbacks and review hours per tier.
+- **How many agents should one engineer run?** (open): Should an engineer run one or two agents at a time, a handful in parallel, or a large crew?
+  - Mitchell Hashimoto, Kent Beck, Robert C. Martin: Run one agent, two at most, because each extra agent adds cleanup and coordination that lands on the human.
+  - Addy Osmani, Simon Willison: About three to five parallel agents per person is workable when the work splits into independent slices, and falling review quality marks the limit.
+  - Gergely Orosz, Steve Yegge: Engineers should manage crews of five or more agents and grow the fleet until throughput stops rising.
+  - Settle it: Have each engineer spend two-week periods at one, three and six concurrent agents on comparable work, recording merged-after-full-review output, rework, merge conflicts and self-reported fatigue.
+- **Can one person replace a team?** (open): Should a leader staff components with single agent-directing individuals, or keep stable multi-person teams?
+  - Robert C. Martin: One human directing agents can do a five or six person team's work, so organise around individuals owning large components behind narrow interfaces.
+  - Thoughtworks, Simon Willison, Kent Beck, Steve Yegge: Teams shrink but not to one. A stable group must share the mental model and cognitive load, and people should keep working with people.
+  - Settle it: Run comparable services with a solo owner and with a team of two or three for six months, tracking delivered functionality, incident recovery when the owner is away, and defects.
+- **Perceived agent speedup versus measured slowdown** (leaning): Should a team reorganise around the large speedups practitioners report, or treat them as unproven until measured on its own work?
+  - METR (measured): Self-reports and forecasts of AI speedup are unreliable and experienced developers on mature repos measured 19 percent slower, so measure with controlled trials before acting.
+  - Lauren Tan, Steve Yegge, Thoughtworks: Agent-driven teams already deliver work estimated for far larger teams and hundreds of PRs or features per engineer, so the gain is real and teams should restructure for it now.
+  - Settle it: Randomly assign pre-scoped backlog tasks to agent-allowed and agent-disallowed conditions for a month, collecting developer forecasts beforehand, and compare measured completion time with the forecasts.
+- **Do experts gain most or least?** (open): Does AI help most in work the engineer already knows deeply, or in unfamiliar territory?
+  - METR (measured): AI helps least where the developer is already expert and most on unfamiliar code and small greenfield work, so be sceptical of it in code you know well.
+  - Anthropic engineering, Gergely Orosz, Simon Willison (measured): AI amplifies existing expertise, and the operator's domain knowledge multiplies what the agent accomplishes, so lean on experts and hire for depth.
+  - Settle it: Tag each agent task with the engineer's self-rated familiarity and measure time to merge and rework against a no-agent baseline in each familiarity band.
+- **Prescribe test-first process to agents?** (leaning): Should a team require agents to follow a test-first workflow, or only verify outcomes?
+  - Birgitta Böckeler (measured): Prescribing TDD added cost without measurable quality gains, so enforce must-haves with hooks and invest in automated feedback on results instead.
+  - Simon Willison, Kent Beck, Robert C. Martin (measured): Agents should work red/green test-first in small test-gated steps, and the chosen test discipline measurably changes the suite and the program.
+  - Settle it: Run the same set of representative tasks several times with and without a TDD instruction, comparing mutation score, escaped defects, blind quality ranking and tokens per task.
+- **Can agents verify their own work?** (open): Is agent self-verification enough to call work done, or must humans own the specification it is checked against?
+  - Lauren Tan, Anthropic engineering: Agents that run and check their own work let humans step out of the slowest part of the loop, and that capability is critical infrastructure.
+  - Birgitta Böckeler, Robert C. Martin, Unmesh Joshi: Agent-written tests and agent-confirmed failures prove little, so humans must write or approve the behavioural spec and mutation testing must show the tests bite.
+  - Settle it: For a set of features, compare defects escaping a fully agent-written and agent-run test suite against defects escaping a human-approved acceptance suite on the same code, and run mutation testing on both.
+- **Write intent down or ask the agent?** (open): Should a team record intent, decisions and tacit knowledge in documents, or keep code simple and ask the agent when questions come up?
+  - Kent Beck: Agents weaken the case for docs and ADRs; keep code simple and ask the agent about the source rather than write documents that go stale.
+  - Gergely Orosz, Charity Majors, OpenAI engineering, METR (measured): Intent, decisions and tacit rules are invisible to agents unless written into versioned artifacts in the repo, so preserve prompts, specs and decision records.
+  - Settle it: Collect real questions about why the code is the way it is and time how accurately they get answered by asking an agent over code alone versus code plus decision records, and count agent mistakes traced to missing context.
+- **Upfront spec or living prototype?** (open): Should agent work start from a human-approved spec, or from a shared prototype evolved in short cycles?
+  - Addy Osmani, Thoughtworks: Run agent work through gated phases of spec, plan and tasks with human approval before code, because spec quality is the biggest lever.
+  - Steve Yegge: Evolve a shared, visible prototype in short cycles instead of a big upfront spec.
+  - Kent Beck: Spec-driven work suits one-off finish-line projects; long-lived systems need practices that keep paying for the next step, so decide which game first.
+  - Settle it: Label projects as one-off or long-lived, assign spec-first or prototype-first, and compare idea-to-ship time, late intent rejections and rework over six months.
+- **Validate before merge or in production?** (open): Should a team invest its validation effort in pre-merge gates or in observing changes in production?
+  - Charity Majors: Pre-production checks quickly stop paying off at agent speed; replace merge-and-hope with flags, progressive rollout and telemetry-based validation in production.
+  - Addy Osmani, Thoughtworks, OpenAI engineering: Deterministic checks in the agent loop and before merge decide when work is done, catching defects before humans or production see them.
+  - Settle it: For a service, track where each agent defect was first caught (in-loop check, review, staged rollout, production) and the cost to fix at each stage, before and after adding progressive rollout.
+- **Megabatch onto main or small batches?** (leaning): When agents commit faster than the build can verify, should a team land large batches and roll forward, or hold to small changes?
+  - Steve Yegge: Once commits outrun build slots, land large batches onto main together and have agents diagnose and fix whatever breaks.
+  - DORA, Addy Osmani, Andrej Karpathy (measured): Keep every change small and cheap to roll back, because larger changes are slower and less stable, and slow generation rather than outgrow review.
+  - Settle it: On a high-commit-rate repo, alternate weeks of megabatch landing and small-batch queueing, recording main-red time, commit-to-landing time and production failures.
+- **Separate role agents or one agent?** (open): Should a team split agent work into separate specialised roles such as implementer and verifier, or drive a single capable agent?
+  - Addy Osmani, Steve Yegge, Anthropic engineering, Kent Beck (measured): The agent that writes a change should never grade it; use separate narrow-role agents for review, testing and merging.
+  - Robert C. Martin, Simon Willison (measured): Drive one capable agent like a senior colleague, and use subagents only to protect context and cut cost, not as role swarms.
+  - Settle it: Run the same tasks with a single agent and with an implementer plus independent verifier agent, comparing escaped defects, tokens per task and human orchestration time.
+- **Review in the moment or monitor?** (open): Should humans review agent output as it arrives, or let agents run autonomously and step in only when needed?
+  - Birgitta Böckeler: Deferring review on high-autonomy runs led to constant rework and late surprises, so understand output as it arrives.
+  - Anthropic engineering, Mitchell Hashimoto (measured): Oversight means being able to see and intervene, not approving each step; agents can take more autonomy, and humans should check in on their own schedule.
+  - Settle it: Assign comparable tasks to in-the-moment review and to autonomous runs with monitoring and handback points, then compare rework, late defects and human hours per task.
+- **Count tokens or only outcomes?** (open): Should leaders track token spend per engineer as a sign of healthy agent adoption?
+  - Steve Yegge (measured): Token spend shows real practice up to about 15M tokens a day, so track it on the way up, then switch to waste and outcomes per token.
+  - Gergely Orosz, Charity Majors, DORA (measured): Activity metrics like tokens and AI lines reward looking busy and invite gaming, so judge AI only by delivery outcomes and set no individual usage targets.
+  - Settle it: Correlate per-engineer token spend over a quarter with their change fail rate, rework and lead time, and see whether spend predicts outcomes below and above the threshold.
+- **Should humans keep writing code?** (open): Should engineers keep hand-writing and reshaping code, or move entirely to specifying, judging and validating?
+  - Unmesh Joshi, Mitchell Hashimoto: Reviewing generated code rarely forces design thinking, so developers should keep writing some code by hand to discover design and preserve skills.
+  - Charity Majors, Anthropic engineering (measured): Engineers' work moves from typing code to writing specs, running experiments, interpreting production and deciding what to build.
+  - Settle it: Give engineers periodic debugging and design-explanation checks, and compare scores and later change lead time for those who keep hand-authoring part of their work against those who fully delegate.
 
 ## Scoreboard
 
@@ -436,7 +430,7 @@ Status: established. Empirical support: measured. Experts: Charity Majors, Addy 
 ## Provenance
 
 - Addy Osmani: [agent-skills: docs/adoption-guide.md](https://github.com/addyosmani/agent-skills/blob/main/docs/adoption-guide.md), undated
-- Addy Osmani: [agent-skills: docs/antigravity-setup.md](https://github.com/addyosmani/agent-skills/blob/main/docs/antigravity-setup.md), undated
+- Addy Osmani: [agent-skills: docs/agents.md](https://github.com/addyosmani/agent-skills/blob/main/docs/agents.md), undated
 - Addy Osmani: [agent-skills: docs/copilot-setup.md](https://github.com/addyosmani/agent-skills/blob/main/docs/copilot-setup.md), undated
 - Addy Osmani: [Agent Harness Engineering | AddyOsmani.com](https://addyosmani.com/blog/agent-harness-engineering/), 2026-04-19
 - Addy Osmani: [Agent Skills | AddyOsmani.com](https://addyosmani.com/blog/agent-skills/), 2026-05-03
@@ -452,7 +446,6 @@ Status: established. Empirical support: measured. Experts: Charity Majors, Addy 
 - Anthropic engineering: [How AI assistance impacts the formation of coding skills](https://www.anthropic.com/research/AI-assistance-coding-skills), 2026-01-29
 - Anthropic engineering: [Measuring AI agent autonomy in practice](https://www.anthropic.com/research/measuring-agent-autonomy), 2026-02-18
 - Anthropic engineering: [Building Claude Code with Boris Cherny](https://newsletter.pragmaticengineer.com/p/building-claude-code-with-boris-cherny), 2026-03-04
-- Anthropic engineering: [Using Claude Code: The unreasonable effectiveness of HTML](https://claude.dev/blog/using-claude-code-the-unreasonable-effectiveness-of-html/), 2026-05-20
 - Anthropic engineering: [Lessons from building Claude Code: How we use skills](https://claude.dev/blog/lessons-from-building-claude-code-how-we-use-skills/), 2026-06-03
 - Anthropic engineering: [Running an AI-native engineering org](https://claude.com/resources/articles/running-an-ai-native-engineering-org), 2026-06-03
 - Anthropic engineering: [How Claude Code is used in practice](https://www.anthropic.com/research/claude-code-expertise), 2026-06-16
@@ -463,6 +456,7 @@ Status: established. Empirical support: measured. Experts: Charity Majors, Addy 
 - Birgitta Böckeler: [Viability of local models for coding](https://martinfowler.com/articles/exploring-gen-ai/local-models-for-coding-factors.html), 2026-07-07
 - Birgitta Böckeler: [TDD inside the agent loop - theater or actual value?](https://martinfowler.com/articles/exploring-gen-ai/tdd-in-the-agent-loop.html), 2026-08-10
 - Charity Majors: [Happy Birthday to Us: Honeycomb 10 Year Manifesto, Part 1](https://www.honeycomb.io/blog/honeycomb-10-year-manifesto-part-1), 2026-02-11
+- Charity Majors: [Your Data Is Made Powerful By Context (so stop destroying it already)](https://charity.wtf/p/your-data-is-made-powerful-by-context), 2026-03-09
 - Charity Majors: [AI enthusiasts are in a race against time, AI skeptics are in a race against entropy](https://charity.wtf/p/ai-enthusiasts-are-in-a-race-against), 2026-06-02
 - Charity Majors: [AI demands more engineering discipline. Not less](https://charity.wtf/p/ai-demands-more-engineering-discipline), 2026-06-15
 - Charity Majors: [Stop being skeptical about AI for development with Charity Majors](https://newsletter.pragmaticengineer.com/p/stop-being-skeptical-about-ai-for), 2026-08-12
@@ -471,12 +465,10 @@ Status: established. Empirical support: measured. Experts: Charity Majors, Addy 
 - DORA: [State of AI-assisted](https://services.google.com/fh/files/misc/2025_state_of_ai_assisted_software_development.pdf), 2025-10-15
 - DORA: [DORA | DORA’s software delivery performance metrics](https://dora.dev/guides/dora-metrics/), 2026-01-05
 - Gergely Orosz: [Inside a five-year-old startup’s rapid AI makeover](https://newsletter.pragmaticengineer.com/p/ai-first-makeover-craft), 2026-01-27
-- Gergely Orosz: [From IDEs to AI Agents with Steve Yegge](https://newsletter.pragmaticengineer.com/p/from-ides-to-ai-agents-with-steve), 2026-03-11
 - Gergely Orosz: [Building Pi, and what makes self-modifying software so fascinating](https://newsletter.pragmaticengineer.com/p/building-pi-and-what-makes-self-modifying), 2026-04-29
-- Gergely Orosz: [Building OpenCode with Dax Raad](https://newsletter.pragmaticengineer.com/p/opencode), 2026-05-27
-- Gergely Orosz: [AI Skills with Matt Pocock](https://newsletter.pragmaticengineer.com/p/ai-skills-with-matt-pocock), 2026-09-17
+- Gergely Orosz: [Design Engineering with Maggie Appleton](https://newsletter.pragmaticengineer.com/p/design-engineering-with-maggie-appleton), 2026-09-23
 - Gergely Orosz: [Distributed databases with Peter Mattis](https://newsletter.pragmaticengineer.com/p/distributed-databases-with-peter), 2026-09-30
-- Kent Beck: [Genie Sessions: Optionality](https://newsletter.kentbeck.com/p/genie-sessions-optionality), 2026-01-30
+- Kent Beck: [Genie Session: Codex for Mac/GPUSortedMap](https://newsletter.kentbeck.com/p/genie-session-codex-for-macgpusortedmap), 2026-02-13
 - Kent Beck: [Earn *And* Learn](https://newsletter.kentbeck.com/p/earn-and-learn), 2026-02-18
 - Kent Beck: [Nobody Knows](https://newsletter.kentbeck.com/p/nobody-knows), 2026-03-25
 - Kent Beck: [Genie Lessons: Nobody Wants Agents](https://newsletter.kentbeck.com/p/genie-lessons-nobody-wants-agents), 2026-04-23
@@ -484,6 +476,7 @@ Status: established. Empirical support: measured. Experts: Charity Majors, Addy 
 - Kent Beck: [Trust Factory](https://newsletter.kentbeck.com/p/trust-factory), 2026-06-02
 - Kent Beck: [How Do You Know That?](https://newsletter.kentbeck.com/p/how-do-you-know-that), 2026-07-22
 - Kent Beck: [O11ycast | Ep. #80, Augmented Coding with Kent Beck | Heavybit](https://www.heavybit.com/library/podcasts/o11ycast/ep-80-augmented-coding-with-kent-beck), 2026-09-17
+- Lauren Tan: [One engineer shipped 2,000 PRs a month to production. Verification is the key.](https://thenewstack.io/agentic-verification-distributed-systems/), 2026-09-19
 - METR: [Measuring the Impact of Early-2025 AI on Experienced Open-Source Developer Productivity](https://arxiv.org/pdf/2507.09089), undated
 - METR: [Measuring the Impact of Early-2025 AI on Experienced Open-Source Developer Productivity](https://metr.org/blog/2025-07-10-early-2025-ai-experienced-os-dev-study/), 2025-07-10
 - Martin Fowler: [Agentic Programming](https://martinfowler.com/bliki/AgenticProgramming.html), 2026-05-21
@@ -492,17 +485,17 @@ Status: established. Empirical support: measured. Experts: Charity Majors, Addy 
 - OpenAI engineering: [Best practices | ChatGPT Learn](https://learn.chatgpt.com/guides/best-practices), undated
 - OpenAI engineering: [Custom Code Review rules for Codex | OpenAI Developers](https://developers.openai.com/blog/custom-code-review-rules-for-codex/), undated
 - OpenAI engineering: [Custom instructions with AGENTS.md | ChatGPT Learn](https://learn.chatgpt.com/docs/agent-configuration/agents-md), undated
+- OpenAI engineering: [Harness engineering: leveraging Codex in an agent-first world](https://web.archive.org/web/20261006122733id_/https://openai.com/index/harness-engineering/), 2026-02-11
 - Robert C. Martin: [Acceptance-Pipeline-Specification: README.md](https://github.com/unclebob/Acceptance-Pipeline-Specification/blob/main/README.md), undated
 - Robert C. Martin: [swarm-forge: README.md](https://github.com/unclebob/swarm-forge/blob/main/README.md), undated
 - Robert C. Martin: [Uncle Bob: Why I Stopped Reading Code and Building Harnesses | Aviator](https://www.aviator.co/podcast/uncle-bob-martin-ai-clean-code), 2026-09-24
-- Simon Willison: [Ladybird adopts Rust, with help from AI](https://simonwillison.net/2026/Feb/23/ladybird-adopts-rust/), 2026-02-23
 - Simon Willison: [Writing about Agentic Engineering Patterns](https://simonwillison.net/2026/Feb/23/agentic-engineering-patterns/), 2026-02-23
 - Simon Willison: [My fireside chat about agentic engineering at the Pragmatic Summit](https://simonwillison.net/2026/Mar/14/pragmatic-summit/), 2026-03-14
+- Simon Willison: [Subagents - Agentic Engineering Patterns](https://simonwillison.net/guides/agentic-engineering-patterns/subagents/), 2026-03-17
 - Simon Willison: [Thoughts on slowing the fuck down](https://simonwillison.net/2026/Mar/25/thoughts-on-slowing-the-fuck-down/), 2026-03-25
 - Simon Willison: [Highlights from my conversation about agentic engineering on Lenny's Podcast](https://simonwillison.net/2026/Apr/2/lennys-podcast/), 2026-04-02
-- Simon Willison: [Eight years of wanting, three months of building with AI](https://simonwillison.net/2026/Apr/5/building-with-ai/), 2026-04-05
 - Simon Willison: [scan-for-secrets 0.1](https://simonwillison.net/2026/Apr/5/scan-for-secrets-3/), 2026-04-05
-- Simon Willison: [AI enthusiasts are in a race against time, AI skeptics are in a race against entropy](https://simonwillison.net/2026/Jun/4/ai-enthusiasts-ai-skeptics/), 2026-06-04
+- Simon Willison: [Vibe coding and agentic engineering are getting closer than I'd like](https://simonwillison.net/2026/May/6/vibe-coding-and-agentic-engineering/), 2026-05-06
 - Simon Willison: [Have your agent record video demos of its work with shot-scraper video](https://simonwillison.net/2026/Jun/30/shot-scraper-video/), 2026-06-30
 - Simon Willison: [More than just code review](https://simonwillison.net/2026/Aug/22/more-than-just-code-review/), 2026-08-22
 - Steve Yegge: [beads: docs/core-concepts/index.md](https://github.com/gastownhall/beads/blob/main/docs/core-concepts/index.md), undated
@@ -511,15 +504,13 @@ Status: established. Empirical support: measured. Experts: Charity Majors, Addy 
 - Steve Yegge: [The Flat Curve Society](https://steve-yegge.medium.com/the-flat-curve-society-36c8b01eb33b?source=rss-c1ec701babb7------2), 2026-06-19
 - Steve Yegge: [The Shape of Things to Come, Part 1: The Continuous Thunderdome](https://yegge.ai/essays/the-shape-of-things-to-come/), 2026-08-02
 - Steve Yegge: [Fences, not Sandboxes](https://yegge.ai/essays/fences-not-sandboxes/), 2026-08-24
-- Steve Yegge: [Seats and Sunsets](https://yegge.ai/essays/seats-and-sunsets/), 2026-09-15
-- Thoughtworks: [Assessing internal quality while coding with an agent](https://martinfowler.com/articles/exploring-gen-ai/ccmenu-quality.html), 2026-01-27
+- Thoughtworks: [Reflections on the future of Software Engineering retreat](https://www.thoughtworks.com/insights/articles/reflections-future-software-engineering-retreat), 2026-02-25
 - Thoughtworks: [Beyond the hype: A real-world guide to building enterprise-grade AI agents](https://www.thoughtworks.com/insights/articles/a-real-world-guide-to-building-enterprise-grade-ai-agents), 2026-02-26
 - Thoughtworks: [Claude Code and COBOL modernization: What’s the reality?](https://www.thoughtworks.com/insights/articles/claude-code-cobol-modernization-reality), 2026-03-02
 - Thoughtworks: [Humans and Agents in Software Engineering Loops](https://martinfowler.com/articles/exploring-gen-ai/humans-and-agents.html), 2026-03-04
 - Thoughtworks: [Patterns for Reducing Friction in AI-Assisted Development](https://martinfowler.com/articles/reduce-friction-ai/), 2026-04-08
-- Thoughtworks: [AI-assisted migration: Critical lessons from the modernization frontlines](https://www.thoughtworks.com/insights/articles/ai-assisted-migration-lessons), 2026-07-13
+- Thoughtworks: [Why AI is raising the stakes of the software engineering craft](https://www.thoughtworks.com/insights/blog/agile-engineering-practices/why-ai-raising-stakes-software-engineering-craft), 2026-04-28
 - Thoughtworks: [The Orchestrator's Tax](https://martinfowler.com/articles/orchestrator-tax.html), 2026-07-16
-- Thoughtworks: [Lessons from platform modernization that every AI program needs](https://www.thoughtworks.com/insights/articles/strategic-ai-delivery-platform-modernization), 2026-09-04
 - Thoughtworks: [Path to AI-first organization](https://www.thoughtworks.com/insights/articles/path-to-ai-first-organization), 2026-09-23
 - Thoughtworks: [Quality is speed: Where engineering discipline moves in the AI era](https://www.thoughtworks.com/insights/articles/quality-is-speed-AI-era), 2026-10-06
 - Unmesh Joshi: [Conversation: LLMs and the what/how loop](https://martinfowler.com/articles/convo-what-how.html), 2026-01-21
