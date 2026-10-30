@@ -96,6 +96,8 @@ Metric: Share of merge-blocking checks that are deterministic (tests, static ana
   - "Once the agent gets all these instructions and guidance, execution still depends on how well the LLM interprets them!"
 - Addy Osmani: Let verification and risk set agent autonomy (probability 0.88, [principles/osmani/let-verification-and-risk-set-agent-autonomy.md](principles/osmani/let-verification-and-risk-set-agent-autonomy.md))
   - "You can use the `--dangerously-skip-permissions` flag only in trusted local projects where you want to bypass manual tool approval prompts."
+- Lauren Tan: Give agents a drivable interface and feature map of the system (probability 0.88, [principles/tan/give-agents-a-drivable-interface-and-feature-map-of-the-system.md](principles/tan/give-agents-a-drivable-interface-and-feature-map-of-the-system.md))
+  - "The verification skill she describes generates a command line interface (CLI) and a feature map for the application."
 - DORA: Trust but verify AI output (probability 0.87, [principles/dora/trust-but-verify-ai-output.md](principles/dora/trust-but-verify-ai-output.md))
   - "Of course, faster code reviews and approvals do not equate to better and more thorough code review processes and approval processes."
 - Charity Majors: Earn agent autonomy over merging with guardrails and evidence (probability 0.87, [principles/majors/earn-agent-autonomy-over-merging-with-guardrails-and-evidence.md](principles/majors/earn-agent-autonomy-over-merging-with-guardrails-and-evidence.md))
@@ -128,6 +130,8 @@ Metric: Share of merge-blocking checks that are deterministic (tests, static ana
   - "Having an existing conformance testing suite of the quality of `test262` is a huge unlock for projects of this magnitude, and the ability to compare output with an existing trusted implementation makes agentic engineering much more of a safe bet."
 - Robert C. Martin: Quality gates buy test strength, not design (probability 0.84, [principles/unclebob/quality-gates-buy-test-strength-not-design.md](principles/unclebob/quality-gates-buy-test-strength-not-design.md))
   - "CRAP buys coverage and spends cleanliness. It does not improve design."
+- Lauren Tan: Pick tools and stack for how well agents can verify with them (probability 0.84, [principles/tan/pick-tools-and-stack-for-how-well-agents-can-verify-with-them.md](principles/tan/pick-tools-and-stack-for-how-well-agents-can-verify-with-them.md))
+  - "I personally feel that agentic verification is so important that I would unironically suggest building your own rich debugging tools, or even choosing a different tech stack, in order to have unfair advantages and extreme productivity in building software."
 - Andrej Karpathy: Map a model's jagged capabilities empirically (probability 0.83, [principles/karpathy/map-a-model-s-jagged-capabilities-empirically.md](principles/karpathy/map-a-model-s-jagged-capabilities-empirically.md))
   - "It is about getting the most out of the tools available, using their features, and investing in your own setup."
 - Andrej Karpathy: The human owns the spec, design and taste (probability 0.83, [principles/karpathy/the-human-owns-the-spec-design-and-taste.md](principles/karpathy/the-human-owns-the-spec-design-and-taste.md))
@@ -162,7 +166,7 @@ Metric: Share of merge-blocking checks that are deterministic (tests, static ana
   - "I think this is a clear example where an AI agent left to their own would have changed the codebase for the worse, and it took a developer with experience to notice the issue and to direct the agent to the correct implementation."
 
 ### Contradicted by
-No contradicting principle found among 219 expert principles yet.
+No contradicting principle found among 222 expert principles yet.
 
 ## Proposing a change
 

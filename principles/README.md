@@ -272,3 +272,9 @@ Each file holds the statement in our words, then the expert's verbatim quotes wi
 - [Pipeline of specialised agent roles with exclusive ownership](unclebob/pipeline-of-specialised-agent-roles-with-exclusive-ownership.md) - Roles for agents, opinion, established
 - [Prove acceptance tests are wired to the application](unclebob/prove-acceptance-tests-are-wired-to-the-application.md) - Deterministic guardrails, opinion, candidate
 - [Quality gates buy test strength, not design](unclebob/quality-gates-buy-test-strength-not-design.md) - Deterministic guardrails, experience, candidate
+
+## Lauren Tan
+
+- [Agents verify their own work so humans stop being the bottleneck](tan/agents-verify-their-own-work-so-humans-stop-being-the-bottleneck.md) - Roles for agents, experience, candidate
+- [Give agents a drivable interface and feature map of the system](tan/give-agents-a-drivable-interface-and-feature-map-of-the-system.md) - Techniques, experience, candidate
+- [Pick tools and stack for how well agents can verify with them](tan/pick-tools-and-stack-for-how-well-agents-can-verify-with-them.md) - Tools, opinion, candidate
