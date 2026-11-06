@@ -70,3 +70,8 @@ The home pipeline tests the new wording against the experts, and the next kit ca
 - **Anthropic engineering** (`anthropic`, 14 principles): Anthropic's own teams writing first-hand about how they build with Claude Code and agents, covering harnesses, context engineering, tool design, skills, verification loops and how engineering roles change.
 - **OpenAI engineering** (`openai`, 12 principles): OpenAI's own teams writing about how they build software with Codex agents, including the harness-engineering account of a seven-engineer team shipping a million-line product with agent-written code, per-worktree observability and mechanically enforced architecture.
 - **Robert C. Martin** (`unclebob`, 12 principles): Author of Clean Code and Agile Manifesto signatory who in 2026 moved to agent-only coding, replacing human code reading with deterministic constraints (TDD, Gherkin acceptance tests, CRAP scores, mutation testing) and published SwarmForge, a multi-agent role pipeline, plus controlled experiments on those disciplines.
+
+## Licence
+
+Chris's own text is CC BY 4.0 (see `LICENSE` and `NOTICE.md`): reuse and adapt it with credit.
+Quoted passages stay with their authors and are cited inline.
